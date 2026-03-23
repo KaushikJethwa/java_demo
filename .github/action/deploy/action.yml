@@ -117,10 +117,10 @@ runs:
           mv "$JAR_FILE" app.jar
 
           echo "🔄 Restarting Spring Boot service..."
-          sudo systemctl restart springboot
+          sudo systemctl restart java-cicd-test
 
           echo "✅ Checking service status..."
-          sudo systemctl status springboot --no-pager
+          sudo systemctl status java-cicd-test --no-pager
 
           echo "----------------------------------------"
           echo "✅ DEPLOYMENT SUCCESSFUL"
