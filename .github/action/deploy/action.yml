@@ -87,7 +87,7 @@ runs:
 
 
     # ---------------------------------------------------
-    # 6️⃣ Deploy on Server
+    # 6️⃣ Deploy on Server (SAFE & CLEAN)
     # ---------------------------------------------------
     - name: Deploy Spring Boot
       uses: appleboy/ssh-action@v1.2.0
@@ -104,26 +104,23 @@ runs:
 
           cd ${{ inputs.target }}
 
-          # Stop old app
-          echo "🛑 Stopping old app..."
-          if pgrep -f "java -jar" > /dev/null; then
-          pkill -f "java -jar" || true
-          echo "Old app stopped"
-          else
-          echo "No running app found"
-          fi
-
-          # Prepare new JAR
           echo "📦 Preparing new JAR..."
-          if ls target/*.jar 1> /dev/null 2>&1; then
-            mv target/*.jar app.jar
-          else
-            mv *.jar app.jar
+
+          # Pick first JAR safely
+          JAR_FILE=$(ls *.jar | head -n 1)
+
+          if [ -z "$JAR_FILE" ]; then
+            echo "❌ No JAR file found!"
+            exit 1
           fi
 
-          # Start app
+          mv "$JAR_FILE" app.jar
+
           echo "🔄 Restarting Spring Boot service..."
           sudo systemctl restart springboot
+
+          echo "✅ Checking service status..."
+          sudo systemctl status springboot --no-pager
 
           echo "----------------------------------------"
           echo "✅ DEPLOYMENT SUCCESSFUL"
