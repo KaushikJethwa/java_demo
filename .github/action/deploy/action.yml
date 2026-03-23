@@ -97,35 +97,34 @@ runs:
         key: ${{ inputs.key }}
         script: |
           set -e
-
+          
           echo "----------------------------------------"
           echo "🚀 SPRING BOOT DEPLOYMENT STARTED"
           echo "----------------------------------------"
-
           cd ${{ inputs.target }}
-
+          
+          echo "🧹 Cleaning old JAR..."
+          rm -f app.jar
+          
           echo "📦 Preparing new JAR..."
-
-          # Pick first JAR safely
           JAR_FILE=$(ls *.jar | head -n 1)
-
+          
           if [ -z "$JAR_FILE" ]; then
-            echo "❌ No JAR file found!"
-            exit 1
+          echo "❌ No JAR file found!"
+          exit 1
           fi
-
+          
           mv "$JAR_FILE" app.jar
-
+          
           echo "🔄 Restarting Spring Boot service..."
+          
           sudo systemctl restart java-cicd-test
-
           echo "✅ Checking service status..."
           sudo systemctl status java-cicd-test --no-pager
-
+          
           echo "----------------------------------------"
           echo "✅ DEPLOYMENT SUCCESSFUL"
           echo "----------------------------------------"
-
 
     # ---------------------------------------------------
     # 7️⃣ Always Close Firewall
