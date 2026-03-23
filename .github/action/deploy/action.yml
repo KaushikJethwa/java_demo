@@ -97,28 +97,28 @@ runs:
         key: ${{ inputs.key }}
         script: |
           set -e
-          
           echo "----------------------------------------"
           echo "🚀 SPRING BOOT DEPLOYMENT STARTED"
           echo "----------------------------------------"
-          cd ${{ inputs.target }}
           
+          cd ${{ inputs.target }}
           echo "🧹 Cleaning old JAR..."
           rm -f app.jar
           
           echo "📦 Preparing new JAR..."
-          JAR_FILE=$(ls *.jar | head -n 1)
+          
+          # Look inside target folder
+          JAR_FILE=$(ls target/*.jar | head -n 1)
           
           if [ -z "$JAR_FILE" ]; then
-          echo "❌ No JAR file found!"
+          echo "❌ No JAR file found in target folder!"
           exit 1
           fi
           
           mv "$JAR_FILE" app.jar
-          
           echo "🔄 Restarting Spring Boot service..."
-          
           sudo systemctl restart java-cicd-test
+          
           echo "✅ Checking service status..."
           sudo systemctl status java-cicd-test --no-pager
           
